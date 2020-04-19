@@ -1,0 +1,17 @@
+[package]
+name = "sound-board-rs"
+version = "0.1.0"
+authors = ["Yoann Kehler <privat+github@yoann.de>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+futures = "0.3.4"
+array-init = "0.1.1"
+opus = "0.2.1"
+rodio = "0.11.0"
+config = "0.9"
+serde = { version = "1.0", features = ["derive"] }
+portmidi = {git = "https://github.com/musitdev/portmidi-rs"}
+chrono = "0.4.11"

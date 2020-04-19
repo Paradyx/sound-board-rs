@@ -1,0 +1,4 @@
+fps = 60
+
+[tracks]
+A1 = {path = "/home/paradyx/Musik/sample.mp3", mode = "toggle" }
