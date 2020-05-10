@@ -212,7 +212,7 @@ impl LaunchpadMiniButton {
     fn from(msg: &MidiMessage) -> Self {
         match msg.status {
             0xb0 => LaunchpadMiniButton::ControlButton(msg.data1),
-            0x90 => LaunchpadMiniButton::NoteButton(msg.data2),
+            0x90 => LaunchpadMiniButton::NoteButton(msg.data1),
             _ => panic!("Received unexpted midi status!"),
         }
     }
