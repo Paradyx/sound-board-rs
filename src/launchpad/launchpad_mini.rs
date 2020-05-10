@@ -370,7 +370,7 @@ impl LaunchpadMini<'_> {
         let msg = msg.message;
         let button = LaunchpadMiniButton::from(&msg);
         let event = match msg.data2 {
-            128 => ButtonEvent::Pressed,
+            127 => ButtonEvent::Pressed,
             0 => ButtonEvent::Released,
             _ => panic!("Received unexpected value: {}", msg),
         };
