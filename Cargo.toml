@@ -8,8 +8,6 @@ edition = "2018"
 
 [dependencies]
 futures = "0.3.4"
-array-init = "0.1.1"
-opus = "0.2.1"
 rodio = "0.11.0"
 config = "0.9"
 serde = { version = "1.0", features = ["derive"] }
