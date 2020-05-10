@@ -54,7 +54,7 @@ fn main() {
     println!("Finished loading");
     main_loop(settings.fps , move |time: SystemTime| {
         match time.duration_since(SystemTime::UNIX_EPOCH) {
-            Ok(n) => println!("{}, Event handler here!", n.as_secs()),
+            Ok(n) => {} //println!("{}, Event handler here!", n.as_secs()),
             Err(_) => panic!("SystemTime before UNIX EPOCH!"),
         };
         Ok(board.mix()?)
