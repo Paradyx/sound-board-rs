@@ -1,8 +1,8 @@
 use rodio::{Sink, decoder, Device};
 use std::fs::File;
 use crate::sound_board::EventHandler;
-use crate::launchpad::ButtonEvent;
-use crate::launchpad::colors::{RGColor, rg_color_code};
+use launchpad_rs::colors::{RGColor, rg_color_code};
+use launchpad_rs::ButtonEvent;
 
 static DEFAULT: RGColor = rg_color_code(2, 0);
 static PRESSED: RGColor = rg_color_code(3, 3);

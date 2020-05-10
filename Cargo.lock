@@ -20,12 +20,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "array-init"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f30bbe2f5e3d117f55bd8c7a1f9191e4a5deba9f15f595bbea4f670c59c765db"
-
-[[package]]
 name = "arrayref"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -359,6 +353,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8b7a7c0c47db5545ed3fef7468ee7bb5b74691498139e4b3f6a20685dc6dd8e"
 
 [[package]]
+name = "launchpad-rs"
+version = "0.1.0"
+source = "git+https://github.com/Paradyx/launchpad-rs#215c0b7a382599589503d2f73be125a51dad9bdd"
+dependencies = [
+ "portmidi",
+]
+
+[[package]]
 name = "lazy_static"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -508,26 +510,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d79f1db9148be9d0e174bb3ac890f6030fcb1ed947267c5a91ee4c91b5a91e15"
 dependencies = [
  "byteorder",
-]
-
-[[package]]
-name = "opus"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e9059a7daf1e6665eb88c4a95ca9ff393a6d276fd66e9d85191280d7e5ec18b"
-dependencies = [
- "libc",
- "opus-sys",
-]
-
-[[package]]
-name = "opus-sys"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fad8b294f482f7972fa466b1c64d5a564e4ee6975599d80483ee4fa83f25b6ec"
-dependencies = [
- "libc",
- "pkg-config",
 ]
 
 [[package]]
@@ -748,12 +730,11 @@ dependencies = [
 name = "sound-board-rs"
 version = "0.1.0"
 dependencies = [
- "array-init",
  "chrono",
  "config",
  "dirs",
  "futures",
- "opus",
+ "launchpad-rs",
  "portmidi",
  "rodio",
  "serde 1.0.106",

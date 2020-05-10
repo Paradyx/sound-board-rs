@@ -1,11 +1,6 @@
-use crate::launchpad::{Button, Launchpad, ButtonEvent};
-use std::thread::sleep;
-use std::time::Duration;
-use crate::launchpad::colors::Color;
-use crate::launchpad::error::Error;
 use std::collections::HashMap;
-use std::collections::hash_map::Entry::Occupied;
-use std::collections::btree_map::Entry::Vacant;
+use launchpad_rs::{Launchpad, ButtonEvent, Button};
+use launchpad_rs::error::Error;
 
 pub trait EventHandler<E, R>
     where E: Sized, // Event
@@ -32,16 +27,14 @@ impl<'a, L> SoundBoard<'a, L>
         };
     }
 
-    pub fn register_track_to_button(&mut self, button: L::Button, track: Box<dyn EventHandler<ButtonEvent, L::Color> + 'a>, initial_color: L::Color) {
-        self.launchpad.set_led(&button, initial_color);
+    pub fn register_track_to_button(&mut self, button: L::Button, track: Box<dyn EventHandler<ButtonEvent, L::Color> + 'a>, initial_color: L::Color) -> Result<(), Error>{
+        self.launchpad.set_led(&button, initial_color)?;
         self.tracks.insert(button, track);
+        Ok(())
     }
 
-    pub fn register_track(&mut self, name: &str, track: Box<dyn EventHandler<ButtonEvent, L::Color> + 'a>, initial_color: L::Color) {
-        match L::Button::from_str(name) {
-            Ok(button) => self.register_track_to_button(button, track, initial_color),
-            Err(e) => println!("An error occurred when registering: {}", e),
-        }
+    pub fn register_track(&mut self, name: &str, track: Box<dyn EventHandler<ButtonEvent, L::Color> + 'a>, initial_color: L::Color) -> Result<(), Error>{
+        self.register_track_to_button(L::Button::from_str(name)?, track, initial_color)
     }
 
     pub fn mix(&mut self) -> Result<(), Error> {

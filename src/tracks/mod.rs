@@ -2,14 +2,11 @@ mod toggle;
 mod fire_and_forget;
 
 pub use toggle::ToggleTrack;
-use crate::launchpad::{ButtonEvent, Button};
 use crate::sound_board::EventHandler;
 use crate::settings::TrackConfig;
-use crate::launchpad::colors::RGColor;
 use crate::tracks::fire_and_forget::FireForgetTrack;
-
-pub type Track<C> = dyn EventHandler<ButtonEvent, C>;
-
+use launchpad_rs::ButtonEvent;
+use launchpad_rs::colors::RGColor;
 
 pub fn from_config<'a>(button_name: String, config: TrackConfig, audio_device: &'a rodio::Device) -> (Box<dyn EventHandler<ButtonEvent, RGColor> + 'a> , RGColor) {
     let mode = Mode::from(config.mode.as_str());
@@ -24,9 +21,7 @@ pub fn from_config<'a>(button_name: String, config: TrackConfig, audio_device: &
             (Box::new(track), initial_color)
         }
     };
-
 }
-
 
 pub enum Mode {
     Toggle,

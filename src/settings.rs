@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 use config::{ConfigError, Config, File};
 use std::collections::HashMap;
 use serde::Deserialize;
@@ -30,7 +30,7 @@ impl Settings {
         let mut settings = Config::new();
 
         // Default settings
-        settings.set("fps", "60");
+        settings.set("fps", "60")?;
 
         // Load user config
         if let Some(mut config_dir) = dirs::config_dir() {
