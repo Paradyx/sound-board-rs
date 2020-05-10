@@ -246,9 +246,10 @@ impl LaunchpadMini<'_> {
 
         launchpad.set_all(rg_color_code(0, 3));
         // Flush buffer
-        launchpad.poll();
-
         sleep(Duration::from_millis(500));
+        launchpad.poll();
+        sleep(Duration::from_millis(500));
+
         launchpad.reset_all();
         return launchpad;
     }
@@ -287,8 +288,8 @@ impl LaunchpadMini<'_> {
 }
 
 impl Launchpad for LaunchpadMini<'_> {
-    type But = LaunchpadMiniButton;
-    type Col = RGColor;
+    type Button = LaunchpadMiniButton;
+    type Color = RGColor;
 
     fn set_led(&mut self, button: &LaunchpadMiniButton, color: RGColor) -> Result<(), Error> {
         self.tx.write_message(Self::led_on_message(button, color))?;

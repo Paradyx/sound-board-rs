@@ -41,21 +41,21 @@ pub enum ButtonEvent {
 
 pub trait Launchpad
 {
-    type But: Button;
-    type Col: Color;
+    type Button: Button;
+    type Color: Color;
     /**
      * Set the [button] on this launchpad to a given [color].
      */
-    fn set_led(&mut self, button: &Self::But, color: Self::Col) -> Result<(), Error>;
+    fn set_led(&mut self, button: &Self::Button, color: Self::Color) -> Result<(), Error>;
 
     /**
      * Turn of the led of [button] on this launchpad.
      */
-    fn reset_led(&mut self, button: &Self::But) -> Result<(), Error>;
+    fn reset_led(&mut self, button: &Self::Button) -> Result<(), Error>;
 
-    fn set_all(&mut self, color: Self::Col) -> Result<(), Error>;
+    fn set_all(&mut self, color: Self::Color) -> Result<(), Error>;
     fn reset_all(&mut self) -> Result<(), Error>;
 
-    fn poll(&mut self) -> Result<Vec<(Self::But, ButtonEvent)>, Error>;
+    fn poll(&mut self) -> Result<Vec<(Self::Button, ButtonEvent)>, Error>;
 }
 

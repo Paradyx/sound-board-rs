@@ -15,30 +15,30 @@ pub trait EventHandler<E, R>
     fn on_update(&mut self) -> Option<R>;
 }
 
-pub struct SoundBoard<L>
+pub struct SoundBoard<'a, L>
     where L: Launchpad,
 {
     launchpad: L,
-    tracks: HashMap<L::But, Box<dyn EventHandler<ButtonEvent, L::Col>>>,
+    tracks: HashMap<L::Button, Box<dyn EventHandler<ButtonEvent, L::Color> + 'a>>,
 }
 
-impl<L> SoundBoard<L>
+impl<'a, L> SoundBoard<'a, L>
     where L: Launchpad,
 {
     pub fn new(launchpad: L) -> Self {
         return SoundBoard {
             launchpad,
-            tracks: HashMap::with_capacity(L::But::TOTAL),
+            tracks: HashMap::with_capacity(L::Button::TOTAL),
         };
     }
 
-    pub fn register_track_to_button(&mut self, button: L::But, track: Box<dyn EventHandler<ButtonEvent, L::Col>>, initial_color: L::Col) {
+    pub fn register_track_to_button(&mut self, button: L::Button, track: Box<dyn EventHandler<ButtonEvent, L::Color> + 'a>, initial_color: L::Color) {
         self.launchpad.set_led(&button, initial_color);
         self.tracks.insert(button, track);
     }
 
-    pub fn register_track(&mut self, name: &str, track: Box<dyn EventHandler<ButtonEvent, L::Col>>, initial_color: L::Col) {
-        match L::But::from_str(name) {
+    pub fn register_track(&mut self, name: &str, track: Box<dyn EventHandler<ButtonEvent, L::Color> + 'a>, initial_color: L::Color) {
+        match L::Button::from_str(name) {
             Ok(button) => self.register_track_to_button(button, track, initial_color),
             Err(e) => println!("An error occurred when registering: {}", e),
         }

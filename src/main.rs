@@ -5,7 +5,6 @@ mod tracks;
 mod midi;
 
 use std::path::Path;
-use std::env;
 use std::thread::sleep;
 use std::process::exit;
 use std::time::{Duration, SystemTime, SystemTimeError};
@@ -20,17 +19,11 @@ use core::fmt;
 use crate::launchpad::error::Error;
 use std::collections::HashMap;
 
+
 // Usage: boards-rs CONFIG
 // Launch pad must be in session mode.
 fn main() {
-    let settings = {
-        let mut args: Vec<String> = env::args().collect();
-        assert_eq!(args.len(), 2, "Board-rs expects exactly one argument.");
-        let config_path = args.pop().expect("Failed to get config from args");
-
-        println!("{}", config_path);
-        Settings::new(Path::new(config_path.as_str())).expect("Failed to read config")
-    };
+    let settings = Settings::new().expect("Failed to read settings");
     println!("Loaded settings.");
 
     println!("Initializing midi context");
