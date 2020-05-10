@@ -23,8 +23,8 @@ Controll options:
   - Play: short press
   - Pause: short press
   - Restart: long press (not working at the moment)
-- [ ] Fire & Forget (can play the same sound multiple times at the same time)
-  - Play: press the button
+- [x] Fire & Forget (can play the same sound multiple times at the same time)
+  - Play: press the button and forget everything
 - [ ] Fire & Restart (does not allow concurrent play of the same sound)
   - Play: press the button
 - [ ] PlayWhileHold
