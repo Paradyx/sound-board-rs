@@ -13,7 +13,7 @@ pub fn from_config<'a>(button_name: String, config: TrackConfig, audio_device: &
 
     return match mode {
         Mode::Toggle => {
-            let (track, initial_color) = ToggleTrack::new(audio_device, button_name, config.path);
+            let (track, initial_color) = ToggleTrack::new(audio_device, button_name, config.path, false); // TODO: use loop parameter
              (Box::new(track), initial_color)
         },
         Mode::FireForget => {

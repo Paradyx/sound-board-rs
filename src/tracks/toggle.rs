@@ -16,11 +16,12 @@ pub struct ToggleTrack<'a> {
     audio_device: &'a Device,
     sink: Sink,
     file: String,
+    r#loop: bool,
 }
 
 
 impl ToggleTrack<'_> {
-    pub fn new(audio_device: &Device, button_name: String, file: String) -> (ToggleTrack, RGColor) {
+    pub fn new(audio_device: &Device, button_name: String, file: String, r#loop: bool) -> (ToggleTrack, RGColor) {
         let sink = Sink::new(audio_device);
         sink.pause();
 
@@ -30,10 +31,13 @@ impl ToggleTrack<'_> {
             audio_device,
             sink,
             file,
+            r#loop,
         };
         return (track, PAUSED);
     }
 
+    /// Restarts the sink. Reuses the existing sink if possible. Does not change start or pause
+    /// the sink.
     fn reset(&mut self) {
         if !self.sink.empty() {
             println!("{}: recreating sink", self.button_name);
@@ -54,64 +58,75 @@ impl ToggleTrack<'_> {
         self.sink.append(decoder)
     }
 
-    fn action_exhausted(&mut self) -> u8 {
-        // TODO: add loop parameter
-        self.sink.pause();
-        self.reset();
-        PAUSED
+    /// Returns true if the button was pressed longer than a threshold
+    fn detect_long_button_press(&mut self) -> bool {
+        if let Some(pressed_on) = self.pressed_on { // Detect long button press
+            let time_since_pressed_on = Utc::now().signed_duration_since(pressed_on);
+            return time_since_pressed_on > Duration::milliseconds(1000)
+        } else { false }
     }
 
-    fn action_toggle_play(&mut self) -> u8 {
+    /// Toggle play pause
+    fn action_toggle_play(&mut self) {
         if self.sink.is_paused() {
             println!("{}: playing", self.button_name);
             self.sink.play();
-            PLAYING
         } else {
             println!("{}: pausing", self.button_name);
             self.sink.pause();
-            PAUSED
         }
     }
 
-    fn action_reset(&mut self) -> u8 {
+    /// Restarts the track and starts playing
+    fn action_restart(&mut self) {
         self.reset();
-        PRESSED_RESET
+        self.sink.play();
+    }
+
+    /// Restarts the track and pause
+    fn action_reset(&mut self) {
+        self.sink.pause();
+        self.reset();
     }
 }
 
 impl EventHandler<ButtonEvent, RGColor> for ToggleTrack<'_> {
     fn on_event(&mut self, event: ButtonEvent) -> Option<RGColor> {
         match event {
-            ButtonEvent::Pressed => {
+            ButtonEvent::Pressed => { // Just store the press_on time. The action takes place when released
                 self.pressed_on = Some(Utc::now());
                 Some(PRESSED)
             }
             ButtonEvent::Released => {
-                return if let Some(pressed_on) = self.pressed_on.clone() {
-                    let time_since_pressed_on = Utc::now().signed_duration_since(pressed_on);
-                    if time_since_pressed_on > Duration::milliseconds(1000) {
-                        self.pressed_on = None; // Ignore next release event
-                        Some(self.action_reset())
+                if self.pressed_on.clone().is_some() { // Ignore release event
+                    if self.detect_long_button_press() {
+                        self.pressed_on = None;
+                        self.action_reset();
                     } else {
-                        self.pressed_on = None; // Button is not pressed anymore
-                        Some(self.action_toggle_play())
+                        self.pressed_on = None;
+                        self.action_toggle_play();
                     }
-                } else { None }
+                }
+                // Update the button color
+                match self.sink.is_paused() {
+                    true => Some(PAUSED),
+                    false => Some(PLAYING)
+                }
             }
         }
     }
 
     fn on_update(&mut self) -> Option<RGColor> {
-        if let Some(pressed_on) = self.pressed_on { // Detect long button press
-            let time_since_pressed_on = Utc::now().signed_duration_since(pressed_on);
-            if time_since_pressed_on > Duration::milliseconds(1000) {
-                self.pressed_on = None;
-                return Some(self.action_reset());
-            }
-        } else if self.sink.empty() { // Detect end of file
-            return Some(self.action_exhausted());
-        }
-
-        return None;
+        return if self.detect_long_button_press() {
+            self.pressed_on = None; // Ingores next release event
+            self.action_reset();
+            Some(PRESSED_RESET)
+        } else if self.sink.empty() && self.r#loop {
+            self.action_restart();
+            Some(PLAYING)
+        } else if self.sink.empty() && !self.r#loop {
+            self.action_reset();
+            Some(PAUSED)
+        } else { None }
     }
 }
