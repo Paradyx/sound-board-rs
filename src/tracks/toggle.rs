@@ -1,9 +1,9 @@
 use chrono::{DateTime, Utc, Duration};
-use rodio::{Sink, decoder, Device};
-use std::fs::File;
+use rodio::{Sink, Device};
 use crate::sound_board::EventHandler;
 use launchpad_rs::colors::{RGColor, rg_color_code};
 use launchpad_rs::ButtonEvent;
+use crate::tracks::auto_buffered;
 
 static PAUSED: RGColor = rg_color_code(2, 0);
 static PLAYING: RGColor = rg_color_code(0, 2);
@@ -23,9 +23,8 @@ pub struct ToggleTrack<'a> {
 impl ToggleTrack<'_> {
     pub fn new(audio_device: &Device, button_name: String, file: String, r#loop: bool) -> (ToggleTrack, RGColor) {
         let sink = Sink::new(audio_device);
-        sink.pause();
 
-        let track = ToggleTrack {
+        let mut track = ToggleTrack {
             button_name,
             pressed_on: None,
             audio_device,
@@ -33,6 +32,9 @@ impl ToggleTrack<'_> {
             file,
             r#loop,
         };
+
+        track.action_reset();
+
         return (track, PAUSED);
     }
 
@@ -53,9 +55,7 @@ impl ToggleTrack<'_> {
         }
 
         println!("{}: loading file: {}", self.button_name, self.file);
-        let f = File::open(&self.file).expect("Failed to open file");
-        let decoder = decoder::Decoder::new(f).unwrap();
-        self.sink.append(decoder)
+        auto_buffered(&self.file, None, &mut self.sink);
     }
 
     /// Returns true if the button was pressed longer than a threshold
