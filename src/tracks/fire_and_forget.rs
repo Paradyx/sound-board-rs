@@ -1,8 +1,8 @@
-use rodio::{Sink, decoder, Device};
-use std::fs::File;
+use rodio::{Sink, Device};
 use crate::sound_board::EventHandler;
 use launchpad_rs::colors::{RGColor, rg_color_code};
 use launchpad_rs::ButtonEvent;
+use crate::tracks::auto_buffered;
 
 static DEFAULT: RGColor = rg_color_code(2, 0);
 static PRESSED: RGColor = rg_color_code(3, 3);
@@ -26,11 +26,10 @@ impl FireForgetTrack<'_> {
 
     fn fire(&mut self) {
         println!("short");
-        let sink = Sink::new(self.audio_device);
+        let mut sink = Sink::new(self.audio_device);
         println!("{}: loading file: {}", self.button_name, self.file);
-        let f = File::open(&self.file).expect("Failed to open file");
-        let decoder = decoder::Decoder::new(f).unwrap();
-        sink.append(decoder);
+        auto_buffered(&self.file, None, &mut sink); // TODO: use buffered flag from config
+
         sink.detach();
     }
 }

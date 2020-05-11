@@ -55,7 +55,7 @@ impl ToggleTrack<'_> {
         }
 
         println!("{}: loading file: {}", self.button_name, self.file);
-        auto_buffered(&self.file, None, &mut self.sink);
+        auto_buffered(&self.file, None, &mut self.sink); // TODO: use buffered flag from config
     }
 
     /// Returns true if the button was pressed longer than a threshold
