@@ -1,10 +1,12 @@
 mod toggle;
 mod fire_and_forget;
+mod fire;
 
 pub use toggle::ToggleTrack;
 use crate::sound_board::EventHandler;
 use crate::settings::TrackConfig;
 use crate::tracks::fire_and_forget::FireForgetTrack;
+use crate::tracks::fire::FireTrack;
 use launchpad_rs::ButtonEvent;
 use launchpad_rs::colors::RGColor;
 use rodio::{decoder, Sink};
@@ -13,7 +15,6 @@ use std::io::BufReader;
 
 pub fn from_config<'a>(button_name: String, config: TrackConfig, audio_device: &'a rodio::Device) -> (Box<dyn EventHandler<ButtonEvent, RGColor> + 'a>, RGColor) {
     let mode = Mode::from(config.mode.as_str());
-
     return match mode {
         Mode::Toggle => {
             let (track, initial_color) = ToggleTrack::new(audio_device, button_name, config.path, false); // TODO: use loop parameter
@@ -23,13 +24,17 @@ pub fn from_config<'a>(button_name: String, config: TrackConfig, audio_device: &
             let (track, initial_color) = FireForgetTrack::new(audio_device, button_name, config.path);
             (Box::new(track), initial_color)
         }
+        Mode::Fire => {
+            let (track, initial_color) = FireTrack::new(audio_device, button_name, config.path);
+            (Box::new(track), initial_color)
+        }
     };
 }
 
 pub enum Mode {
     Toggle,
     FireForget,
-    // Fire,
+    Fire,
     // Hold,
     // Loop,
 }
@@ -39,7 +44,7 @@ impl From<&str> for Mode {
         match str {
             "toggle" => Mode::Toggle,
             "fireforget" => Mode::FireForget,
-            //  "fire" => Mode::Fire,
+            "fire" => Mode::Fire,
             //  "hold" => Mode::Hold,
             _ => panic!("Illegal mode '{}'", str)
         }

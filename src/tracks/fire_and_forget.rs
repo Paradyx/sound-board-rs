@@ -25,7 +25,6 @@ impl FireForgetTrack<'_> {
     }
 
     fn fire(&mut self) {
-        println!("short");
         let mut sink = Sink::new(self.audio_device);
         println!("{}: loading file: {}", self.button_name, self.file);
         auto_buffered(&self.file, None, &mut sink); // TODO: use buffered flag from config
